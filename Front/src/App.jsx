@@ -1,50 +1,67 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import io from 'socket.io-client'
+import Swal from 'sweetalert2'
+
+const socket = io('http://localhost:5000')
+
 
 function App() {
+  const [mensaje, setMensaje] = useState({name: '', message: ''});
+  const [chat, setChat] = useState([]);
   const [count, setCount] = useState(0)
-  const [mensajeApi, setMensajeApi] = useState('')
 
   // Aquí se llama a la API
   useEffect(() => {
-    fetch('http://localhost:5000/api/hello')
-      .then(res => res.json())
-      .then(data => {
-        console.log(data)
-        setMensajeApi(data.message)
-      })
-      .catch(err => console.error('Error al conectar con la API:', err))
+
+    Swal.fire({
+      icon: 'question',
+      title: 'Identificate',
+      input: 'text',
+      inputLabel: 'Escribe tu nombre',
+      inputValue: '',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    }).then((result)=>{
+      setMensaje({...mensaje, name: result.value});
+    })
+
+    socket.on('chat:client', (data) => {
+      console.log(data);
+      setChat(data);
+    })
+
+    
   }, [])
+
+  const enviarMensaje = (e) => {
+    e.preventDefault();
+    socket.emit('mensaje:server', mensaje)
+    setMensaje({...mensaje, message: ''});
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-
-      {/* Aquí mostramos el mensaje que viene desde la API */}
-      <div style={{ marginTop: '20px' }}>
-        <strong>Mensaje desde la API:</strong> {mensajeApi || 'Cargando...'}
-      </div>
+      <div className="container mt-5">
+        <div className='bg-dark text-white p-5 rounded'>
+          <h1>Chat de samuel</h1>
+          {
+            chat.map((msg, index) => (
+              <div key={index} className="alert alert-primary" role="alert">
+                {msg.name}: {msg.message}
+              </div>
+            ))
+          }
+        </div>
+        <form className='mt-5' onSubmit={enviarMensaje}>
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label">Mensaje</label>
+            <input type="text" className="form-control" id="message" placeholder='Escribe tu mensaje aqui' value={mensaje.message} onChange={(e)=>setMensaje({...mensaje, message: e.target.value})} />
+          </div>
+          <button type="submit" className="btn btn-primary">Enviar</button>
+        </form>
+        <h1>Contador: {count}</h1>
+        <button onClick={() => setCount(count + 1)}>Incrementar</button>
+      </div> 
     </>
   )
 }
