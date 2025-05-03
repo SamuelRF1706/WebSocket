@@ -10,7 +10,6 @@ let count = 0;
 
 app.use(cors());
 app.use(morgan("dev"));
-// app.use(express.json()); // si planeas usar body parsing
 
 const PORT = 5000;
 const server = http.createServer(app);
