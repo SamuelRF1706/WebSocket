@@ -2,8 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = 5000;
 
-const { getConect } = require('../Api/src/commons/dbConnection');
- // Ajusta la ruta a tu archivo donde tienes getConect
+const { getConect } = require('../Api/src/commons/dbConnection'); //Ruta del archivo de conexión
 
  async function testDBConnection() {
   try {
