@@ -2,27 +2,26 @@ const express = require('express');
 const app = express();
 const PORT = 5000;
 
-const { getConect } = require('../Api/src/commons/dbConnection'); //Ruta del archivo de conexión
+const { getConect } = require('../Api/src/commons/dbConnection'); // Verifica que esta ruta sea correcta
 
- async function testDBConnection() {
+async function testDBConnection() {
   try {
-    const pool = await getConect();
+    const pool = await getConect(); // Asegúrate de que la función se llame getConnect o el nombre correcto
 
     if (pool) {
-      const result = await pool.request().query('SELECT 1 AS testConnection');
+      const result = await pool.request().query('SELECT * FROM EMPLEADO;'); //SELECT 1 AS testConnection
       console.log("✅ Consulta de prueba exitosa:", result.recordset);
     } else {
       console.error("🚫 No se pudo establecer la conexión con la base de datos.");
     }
   } catch (err) {
-    console.error("❌ Error al probar la conexión:", err); // aquí era `err`, no `error`
+    console.error("❌ Error al probar la conexión:", err); // Corregido: "err" es el nombre del parámetro
   }
 }
-
 testDBConnection();
 
-
-app.use(express.json()); // Permite leer JSON en los requests
+// Permite leer JSON en los requests
+app.use(express.json());
 
 // Rutas simples de ejemplo
 app.get('/api/hello', (req, res) => {
