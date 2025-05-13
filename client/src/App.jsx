@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import Asambleas from './components/asambleas'
 import io from 'socket.io-client'
 import Swal from 'sweetalert2'
 
@@ -47,7 +48,8 @@ function App() {
 
   return (
     <div className="container mt-5">
-      <div className='bg-dark text-white p-5 rounded'>
+      <Asambleas />
+      {/* <div className='bg-dark text-white p-5 rounded'>
         <h1>Chat</h1>
         {
           chat.map((msg, index) => (
@@ -63,7 +65,7 @@ function App() {
           <input type="text" className="form-control" id="message" placeholder='Escribe tu mensaje aqui' value={mensaje.message} onChange={(e)=>setMensaje({...mensaje, message: e.target.value})} />
         </div>
         <button type="submit" className="btn btn-primary">Enviar</button>
-      </form>
+      </form> */}
 
     </div>
   )
