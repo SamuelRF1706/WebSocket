@@ -10,7 +10,8 @@ import { db } from '../../server/commons/firebase'
 const socket = io('http://localhost:5000')
 
 function App() {
-  const [mensaje, setMensaje] = useState({ name: '', message: '' });
+  const [mensaje, setMensaje] = useState({ name: '', message: '' })
+  const [votoDocPath, setVotoDocPath] = useState(null) // Guardamos la ruta completa
 
   useEffect(() => {
     const identificarYGuardarUsuario = async () => {
@@ -23,54 +24,43 @@ function App() {
         allowOutsideClick: false,
         allowEscapeKey: false,
         inputValidator: (value) => {
-          if (!value) return 'Debes escribir un nombre';
+          if (!value) return 'Debes escribir un nombre'
         }
-      });
+      })
 
-      const nombre = result.value;
-      setMensaje(prev => ({ ...prev, name: nombre }));
-      setUserId(nombre); 
+      const nombre = result.value
+      setMensaje(prev => ({ ...prev, name: nombre }))
 
       // Obtener ASAMBLEA y MOCIÓN
-      const asambleasSnap = await getDocs(collection(db, 'ASAMBLEAS'));
-      const asambleaDoc = asambleasSnap.docs[0];
-      const asambleaId = asambleaDoc.id;
+      const asambleasSnap = await getDocs(collection(db, 'ASAMBLEAS'))
+      const asambleaDoc = asambleasSnap.docs[0]
+      const asambleaId = asambleaDoc.id
 
-      const mocionesSnap = await getDocs(collection(db, 'ASAMBLEAS', asambleaId, 'MOCIONES'));
-      const mocionDoc = mocionesSnap.docs[0];
-      const mocionId = mocionDoc.id;
+      const mocionesSnap = await getDocs(collection(db, 'ASAMBLEAS', asambleaId, 'MOCIONES'))
+      const mocionDoc = mocionesSnap.docs[0]
+      const mocionId = mocionDoc.id
 
-      // Crear VOTO
-      const votoRef = await addDoc(
-        collection(db, 'ASAMBLEAS', asambleaId, 'MOCIONES', mocionId, 'VOTOS'),
-        { nombre }
-      );
+      // Crear VOTO con ID automático
+      const votoRef = await addDoc(collection(db, 'ASAMBLEAS', asambleaId, 'MOCIONES', mocionId, 'VOTOS'), {
+        nombre
+      })
 
-      // Guardar ruta
+      // Guardar la ruta para luego actualizar
       setVotoDocPath({
         asambleaId,
         mocionId,
         votoId: votoRef.id
-      });
-    };
+      })
+    }
 
-    identificarYGuardarUsuario();
-
-    // socket.on('chat:client', (data) => {
-    //   console.log(data);
-    // });
-
-    // socket.on('cantidadVeces', (data) => {
-    //   console.log('Veces conectado:', data);
-    // });
-
-  }, []);
+    identificarYGuardarUsuario()
+  }, [])
 
   return (
     <div className="container mt-5">
-      <Asambleas />
+      <Asambleas votoDocPath={votoDocPath} nombreUsuario={mensaje.name} />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
