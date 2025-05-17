@@ -3,7 +3,8 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
-// Configuración de Firebase
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyA6c7n_MwKINV5w7ip2Az9kyAyVAR8EAsE",
   authDomain: "asambela-a174f.firebaseapp.com",
@@ -19,4 +20,4 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app); // <-- necesario para leer datos
 const analytics = getAnalytics(app);
 
-export { db };
+export{db};

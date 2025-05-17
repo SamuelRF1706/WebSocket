@@ -11,7 +11,6 @@ const socket = io('http://localhost:5000')
 
 function App() {
   const [mensaje, setMensaje] = useState({ name: '', message: '' });
-  const [votoDocPath, setVotoDocPath] = useState(null);
 
   useEffect(() => {
     const identificarYGuardarUsuario = async () => {
@@ -30,6 +29,7 @@ function App() {
 
       const nombre = result.value;
       setMensaje(prev => ({ ...prev, name: nombre }));
+      setUserId(nombre); 
 
       // Obtener ASAMBLEA y MOCIÓN
       const asambleasSnap = await getDocs(collection(db, 'ASAMBLEAS'));
@@ -68,10 +68,7 @@ function App() {
 
   return (
     <div className="container mt-5">
-      {/* Pasamos votoDocPath y mensaje.name a Asambleas */}
-      {votoDocPath && mensaje.name && (
-        <Asambleas votoId={votoDocPath.votoId} mocionPath={votoDocPath} />
-      )}
+      <Asambleas />
     </div>
   );
 }
