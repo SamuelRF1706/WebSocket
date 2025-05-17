@@ -1,11 +1,9 @@
-// Import the functions you need from the SDKs you need
+// src/firebase.js
 import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyA6c7n_MwKINV5w7ip2Az9kyAyVAR8EAsE",
   authDomain: "asambela-a174f.firebaseapp.com",
@@ -16,6 +14,9 @@ const firebaseConfig = {
   measurementId: "G-JGL2HL0WRS"
 };
 
-// Initialize Firebase
+// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app); // <-- necesario para leer datos
 const analytics = getAnalytics(app);
+
+export { db };
