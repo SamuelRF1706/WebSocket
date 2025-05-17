@@ -7,7 +7,7 @@ function Mociones({ asambleaId, mocionId, userId }) {
     const [voto, setVoto] = useState('');
     const [mensaje, setMensaje] = useState('');
 
-    const handleEnviarVoto = async () => {
+        const handleEnviarVoto = async () => {
         if (!voto) {
             setMensaje('⚠️ Por favor selecciona una opción antes de enviar.');
             return;
@@ -46,7 +46,7 @@ function Mociones({ asambleaId, mocionId, userId }) {
                 <input
                     type="radio"
                     className="form-check-input"
-                    name="voto"
+                    name="radioDefault"
                     value="A favor"
                     onChange={(e) => setVoto(e.target.value)}
                     checked={voto === 'A favor'}
