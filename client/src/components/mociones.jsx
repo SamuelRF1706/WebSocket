@@ -1,91 +1,84 @@
 import React, { useState } from 'react';
-import { addDoc, collection, doc } from 'firebase/firestore'; // Funciones del SDK Firestore
-import { db } from './../../../server/commons/firebase';    // Solo importas `db` desde tu archivo local
-
+import { db } from './../../../server/commons/firebase';
+import { collection, doc, updateDoc, getDocs, query, where } from 'firebase/firestore';
 
 function Mociones({ asambleaId, mocionId, userId }) {
-    const [voto, setVoto] = useState('');
-    const [mensaje, setMensaje] = useState('');
+  const [voto, setVoto] = useState('');
+  const [mensaje, setMensaje] = useState('');
 
-        const handleEnviarVoto = async () => {
-        if (!voto) {
-            setMensaje('⚠️ Por favor selecciona una opción antes de enviar.');
-            return;
-        }
+  const handleEnviarVoto = async () => {
+    if (!voto) {
+      setMensaje('⚠️ Por favor selecciona una opción antes de enviar.');
+      return;
+    }
 
-        const votoData = {
-            voto,
-            userId: userId || 'anonimo',
-            timestamp: new Date()
-        };
+    try {
+      // Buscar el documento del usuario en VOTOS
+      const votosRef = collection(db, 'ASAMBLEA', asambleaId, 'MOCIONES', mocionId, 'Votos');
+      const q = query(votosRef, where('userId', '==', userId));
+      const querySnapshot = await getDocs(q);
 
-        try {
-            const votosRef = collection(
-                doc(
-                    collection(
-                        doc(db, 'ASAMBLEA', asambleaId),
-                        'MOCIONES'
-                    ),
-                    mocionId
-                ),
-                'VOTOS'
-            );
+      if (querySnapshot.empty) {
+        setMensaje('❌ No se encontró el documento del usuario en esta moción.');
+        return;
+      }
 
-            await addDoc(votosRef, votoData);
-            setMensaje('✅ Voto registrado correctamente.');
-        } catch (error) {
-            console.error('❌ Error al guardar el voto:', error);
-            setMensaje('❌ Error al guardar el voto.');
-        }
-    };
+      const votoDoc = querySnapshot.docs[0];
+      const votoDocRef = doc(db, 'ASAMBLEA', asambleaId, 'MOCIONES', mocionId, 'VOTOS', votoDoc.id);
 
-    return (
-        <div className="card p-3 mt-3">
-            <h4>Moción: {mocionId}</h4>
-            <div className="form-check">
-                <input
-                    type="radio"
-                    className="form-check-input"
-                    name="radioDefault"
-                    value="A favor"
-                    onChange={(e) => setVoto(e.target.value)}
-                    checked={voto === 'A favor'}
-                    id="aFavor"
-                />
-                <label htmlFor="aFavor" className="form-check-label">A favor</label>
-            </div>
-            <div className="form-check">
-                <input
-                    type="radio"
-                    className="form-check-input"
-                    name="voto"
-                    value="En contra"
-                    onChange={(e) => setVoto(e.target.value)}
-                    checked={voto === 'En contra'}
-                    id="enContra"
-                />
-                <label htmlFor="enContra" className="form-check-label">En contra</label>
-            </div>
-            <div className="form-check">
-                <input
-                    type="radio"
-                    className="form-check-input"
-                    name="voto"
-                    value="No votar"
-                    onChange={(e) => setVoto(e.target.value)}
-                    checked={voto === 'No votar'}
-                    id="noVotar"
-                />
-                <label htmlFor="noVotar" className="form-check-label">No votar</label>
-            </div>
+      await updateDoc(votoDocRef, {
+        voto,
+        timestamp: new Date(),
+      });
 
-            <button className="btn btn-dark mt-3" onClick={handleEnviarVoto}>
-                Enviar voto
-            </button>
+      setMensaje('✅ Voto registrado correctamente.');
+    } catch (error) {
+      console.error('❌ Error al guardar el voto:', error);
+      setMensaje('❌ Error al guardar el voto.');
+    }
+  };
 
-            {mensaje && <p className="mt-2">{mensaje}</p>}
-        </div>
-    );
+  return (
+    <div>
+      <h3>Moción</h3>
+
+      <div>
+        <label>
+          <input
+            type="radio"
+            name="voto"
+            value="A favor"
+            checked={voto === "A favor"}
+            onChange={(e) => setVoto(e.target.value)}
+          />
+          A favor
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="voto"
+            value="En contra"
+            checked={voto === "En contra"}
+            onChange={(e) => setVoto(e.target.value)}
+          />
+          En contra
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="voto"
+            value="Abstención"
+            checked={voto === "Abstención"}
+            onChange={(e) => setVoto(e.target.value)}
+          />
+          Abstención
+        </label>
+      </div>
+
+      <button onClick={handleEnviarVoto}>Enviar voto</button>
+      {mensaje && <p>{mensaje}</p>}
+    </div>
+  );
 }
 
 export default Mociones;

@@ -11,6 +11,7 @@ const socket = io('http://localhost:5000')
 
 function App() {
   const [mensaje, setMensaje] = useState({ name: '', message: '' });
+  const [userId, setUserId] = useState('');
 
   useEffect(() => {
     const identificarYGuardarUsuario = async () => {
@@ -29,6 +30,7 @@ function App() {
 
       const nombre = result.value;
       setMensaje(prev => ({ ...prev, name: nombre }));
+      setUserId(nombre); 
 
       // Obtener la primera ASAMBLEA
       const asambleasSnap = await getDocs(collection(db, 'ASAMBLEAS'));
@@ -63,7 +65,7 @@ function App() {
 
   return (
     <div className="container mt-5">
-      <Asambleas />
+      <Asambleas/>
     </div>
   );
 }
