@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { collection, getDocs } from 'firebase/firestore'
-import { db } from '../../../server/commons/firebase.js'  // Ajusta si tu archivo se llama diferente
+import { db } from '../../../server/commons/firebase.js'
 import Mociones from '../components/mociones.jsx'
 
-function Asambleas() {
+function Asambleas({ votoId, mocionPath }) {
     const [asamblea, setAsamblea] = useState(null)
     const [showMociones, setShowMociones] = useState(false)
 
@@ -11,7 +11,7 @@ function Asambleas() {
         const fetchData = async () => {
             const querySnapshot = await getDocs(collection(db, "ASAMBLEAS"))
             querySnapshot.forEach((doc) => {
-                setAsamblea(doc.data()) // solo una, como dijiste
+                setAsamblea(doc.data()) // seguimos mostrando solo una
             })
         }
 
@@ -19,11 +19,11 @@ function Asambleas() {
     }, [])
 
     const handleClick = () => {
-        setShowMociones(!showMociones)
+        setShowMociones(true)
     }
 
-    if (showMociones) {
-        return <Mociones />
+    if (showMociones && votoId && mocionPath) {
+        return <Mociones votoId={votoId} mocionPath={mocionPath} />
     }
 
     return (

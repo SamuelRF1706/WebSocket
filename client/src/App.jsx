@@ -11,6 +11,7 @@ const socket = io('http://localhost:5000')
 
 function App() {
   const [mensaje, setMensaje] = useState({ name: '', message: '' });
+  const [votoDocPath, setVotoDocPath] = useState(null);
 
   useEffect(() => {
     const identificarYGuardarUsuario = async () => {
@@ -30,40 +31,47 @@ function App() {
       const nombre = result.value;
       setMensaje(prev => ({ ...prev, name: nombre }));
 
-      // Obtener la primera ASAMBLEA
+      // Obtener ASAMBLEA y MOCIÓN
       const asambleasSnap = await getDocs(collection(db, 'ASAMBLEAS'));
       const asambleaDoc = asambleasSnap.docs[0];
-      if (!asambleaDoc) {
-        console.error('No hay asambleas registradas');
-        return;
-      }
-
       const asambleaId = asambleaDoc.id;
 
-      // Obtener la primera MOCIÓN dentro de la ASAMBLEA
       const mocionesSnap = await getDocs(collection(db, 'ASAMBLEAS', asambleaId, 'MOCIONES'));
       const mocionDoc = mocionesSnap.docs[0];
-      if (!mocionDoc) {
-        console.error('No hay mociones registradas en esta asamblea');
-        return;
-      }
-
       const mocionId = mocionDoc.id;
 
-      // Agregar un nuevo voto con ID automático
-      await addDoc(collection(db, 'ASAMBLEAS', asambleaId, 'MOCIONES', mocionId, 'Votos'), {
-        nombre: nombre
-      });
+      // Crear VOTO
+      const votoRef = await addDoc(
+        collection(db, 'ASAMBLEAS', asambleaId, 'MOCIONES', mocionId, 'VOTOS'),
+        { nombre }
+      );
 
-      console.log(`Nombre "${nombre}" guardado en VOTOS`);
+      // Guardar ruta
+      setVotoDocPath({
+        asambleaId,
+        mocionId,
+        votoId: votoRef.id
+      });
     };
 
     identificarYGuardarUsuario();
+
+    // socket.on('chat:client', (data) => {
+    //   console.log(data);
+    // });
+
+    // socket.on('cantidadVeces', (data) => {
+    //   console.log('Veces conectado:', data);
+    // });
+
   }, []);
 
   return (
     <div className="container mt-5">
-      <Asambleas />
+      {/* Pasamos votoDocPath y mensaje.name a Asambleas */}
+      {votoDocPath && mensaje.name && (
+        <Asambleas votoId={votoDocPath.votoId} mocionPath={votoDocPath} />
+      )}
     </div>
   );
 }
