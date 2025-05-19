@@ -69,53 +69,78 @@ function Mociones({ votoId, mocionPath }) {
   }
 
   return (
-    <div className="container">
-      <h3 className="text-center">Mociones</h3>
-      {mociones.length === 0 && <p>Cargando mociones...</p>}
-      {mociones.map(({ id, MocionAprobacion, MocionRechazo, MocionSuspencion, op1, op2, op3 }) => (
-        <div key={id} className="mb-4 border p-3 rounded">
-          <h4>{MocionAprobacion}</h4>
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="radio"
-              name={`radio-${id}`}
-              id={`${id}-op1`}
-              checked={votos[id] === op1}
-              onChange={() => handleVoteChange(id, op1)}
-            />
-            <label className="form-check-label" htmlFor={`${id}-op1`}>{op1}</label>
-          </div>
+    <div className="container py-5">
+      <h2 className="text-center mb-5 text-primary fw-bold">Mociones de Asamblea</h2>
 
-          <h4>{MocionRechazo}</h4>
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="radio"
-              name={`radio-${id}`}
-              id={`${id}-op2`}
-              checked={votos[id] === op2}
-              onChange={() => handleVoteChange(id, op2)}
-            />
-            <label className="form-check-label" htmlFor={`${id}-op2`}>{op2}</label>
-          </div>
+      {mociones.length === 0 && (
+        <p className="text-center text-muted">Cargando mociones...</p>
+      )}
 
-          <h4>{MocionSuspencion}</h4>
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="radio"
-              name={`radio-${id}`}
-              id={`${id}-op3`}
-              checked={votos[id] === op3}
-              onChange={() => handleVoteChange(id, op3)}
-            />
-            <label className="form-check-label" htmlFor={`${id}-op3`}>{op3}</label>
-          </div>
+      <div className="row justify-content-center">
+        {mociones.map(({ id, MocionAprobacion, MocionRechazo, MocionSuspencion, op1, op2, op3 }) => (
+          <div key={id} className="col-md-8 mb-4">
+            <div className="card shadow-sm border-0">
+              <div className="card-body">
+                <h4 className="card-title fw-bold mb-3 text-dark">
+                  Moción #{id.substring(0, 6)}
+                </h4>
 
-          <button className="btn btn-primary mt-2" onClick={() => handleSubmit(id)}>Enviar voto</button>
-        </div>
-      ))}
+                <div className="mb-3">
+                  <p className="fw-semibold">{MocionAprobacion}</p>
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name={`radio-${id}`}
+                      id={`${id}-op1`}
+                      checked={votos[id] === op1}
+                      onChange={() => handleVoteChange(id, op1)}
+                    />
+                    <label className="form-check-label" htmlFor={`${id}-op1`}>{op1}</label>
+                  </div>
+                </div>
+
+                <div className="mb-3">
+                  <p className="fw-semibold">{MocionRechazo}</p>
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name={`radio-${id}`}
+                      id={`${id}-op2`}
+                      checked={votos[id] === op2}
+                      onChange={() => handleVoteChange(id, op2)}
+                    />
+                    <label className="form-check-label" htmlFor={`${id}-op2`}>{op2}</label>
+                  </div>
+
+                </div>
+                <div className="mb-3">
+                  <p className="fw-semibold">{MocionSuspencion}</p>
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name={`radio-${id}`}
+                      id={`${id}-op3`}
+                      checked={votos[id] === op3}
+                      onChange={() => handleVoteChange(id, op3)}
+                    />
+                    <label className="form-check-label" htmlFor={`${id}-op3`}>{op3}</label>
+                  </div>
+                </div>
+
+                <button
+                  className="btn btn-outline-primary mt-3 w-100"
+                  onClick={() => handleSubmit(id)}
+                >
+                  Enviar voto
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

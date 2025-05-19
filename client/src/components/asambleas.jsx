@@ -27,17 +27,32 @@ function Asambleas({ votoDocPath, nombreUsuario }) {
   }
 
   return (
-    <div className="card" style={{ width: '18rem' }}>
+  <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div className="card shadow-sm border-0" style={{ width: '22rem' }}>
       <div className="card-body">
-        <h5 className="card-title">{asamblea?.NOMBRE || 'Cargando...'}</h5>
-        <h6 className="card-subtitle mb-2 text-body-secondary">{asamblea?.LUGAR || 'Cargando...'}</h6>
-        <p className="card-text">{asamblea?.MOTIVO || 'Cargando...'}</p>
-        <p className="card-text"><small>Fecha: {asamblea?.FECHA_SOLICITUD || 'Cargando...'}</small></p>
-        <button type="button" className="btn btn-outline-dark" onClick={handleClick}>
-          Detalles
+        <h3 className="card-title fw-bold text-primary mb-2">
+          {asamblea?.NOMBRE || 'Cargando...'}
+        </h3>
+        <h6 className="card-subtitle text-muted mb-3 fst-italic">
+          {asamblea?.LUGAR || 'Cargando...'}
+        </h6>
+        <p className="card-text text-dark lh-base mb-3">
+          {asamblea?.MOTIVO || 'Cargando...'}
+        </p>
+        <p className="card-text text-secondary small">
+          <strong>Fecha:</strong> {asamblea?.FECHA_SOLICITUD || 'Cargando...'}
+        </p>
+        <button
+          type="button"
+          className="btn btn-dark w-100 mt-3"
+          onClick={handleClick}
+        >
+          Ver detalles
         </button>
       </div>
     </div>
+  </div>
+
   )
 }
 
