@@ -77,16 +77,15 @@ function Mociones({ votoId, mocionPath }) {
       )}
 
       <div className="row justify-content-center">
-        {mociones.map(({ id, MocionAprobacion, MocionRechazo, MocionSuspencion, op1, op2, op3 }) => (
+        {mociones.map(({ id, MocionConfianza, MocionAprobacion, MocionSuspencion, op1, op2, op3 }) => (
           <div key={id} className="col-md-8 mb-4">
             <div className="card shadow-sm border-0">
               <div className="card-body">
                 <h4 className="card-title fw-bold mb-3 text-dark">
-                  Moción #{id.substring(0, 6)}
+                  {MocionAprobacion} {MocionConfianza} {MocionSuspencion}
                 </h4>
 
                 <div className="mb-3">
-                  <p className="fw-semibold">{MocionAprobacion}</p>
                   <div className="form-check">
                     <input
                       className="form-check-input"
@@ -101,7 +100,6 @@ function Mociones({ votoId, mocionPath }) {
                 </div>
 
                 <div className="mb-3">
-                  <p className="fw-semibold">{MocionRechazo}</p>
                   <div className="form-check">
                     <input
                       className="form-check-input"
@@ -116,7 +114,6 @@ function Mociones({ votoId, mocionPath }) {
 
                 </div>
                 <div className="mb-3">
-                  <p className="fw-semibold">{MocionSuspencion}</p>
                   <div className="form-check">
                     <input
                       className="form-check-input"
@@ -139,6 +136,7 @@ function Mociones({ votoId, mocionPath }) {
               </div>
             </div>
           </div>
+
         ))}
       </div>
     </div>
