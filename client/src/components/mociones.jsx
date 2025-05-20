@@ -37,36 +37,43 @@ function Mociones({ votoId, mocionPath }) {
 
   // Enviar voto para una mocion específica
   const handleSubmit = async (mocionId) => {
-    const votoSeleccionado = votos[mocionId]
-    if (!votoSeleccionado) {
-      Swal.fire({
-        icon: 'warning',
-        title: '¡Atención!',
-        text: 'Por favor, selecciona una opción antes de enviar.',
-      })
-      return
-    }
-
-    try {
-      const votoRef = doc(db, 'ASAMBLEAS', mocionPath.asambleaId, 'MOCIONES', mocionId, 'VOTOS', votoId)
-      await updateDoc(votoRef, {
-        voto: votoSeleccionado,
-        fecha_voto: new Date()
-      })
-      Swal.fire({
-        icon: 'success',
-        title: '¡Voto guardado!',
-        text: `Tu voto "${votoSeleccionado}" en la moción se guardó correctamente.`,
-      })
-    } catch (error) {
-      console.error('Error guardando voto:', error)
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Hubo un problema al guardar tu voto. Intenta de nuevo.',
-      })
-    }
+  const votoSeleccionado = votos[mocionId]
+  if (!votoSeleccionado) {
+    Swal.fire({
+      icon: 'warning',
+      title: '¡Atención!',
+      text: 'Por favor, selecciona una opción antes de enviar.',
+    })
+    return
   }
+
+  try {
+    // Determinar el índice de la moción en la lista para asignar RM1, RM2, RM3
+    const index = mociones.findIndex(mocion => mocion.id === mocionId)
+    const campoVoto = `RM${index + 1}`
+    const campoFecha = `fecha_RM${index + 1}`
+
+    const votoRef = doc(db, 'ASAMBLEAS', mocionPath.asambleaId, 'VOTOS_PARTICIPANTES', votoId)
+
+    await updateDoc(votoRef, {
+      [campoVoto]: votoSeleccionado,
+      [campoFecha]: new Date()
+    })
+
+    Swal.fire({
+      icon: 'success',
+      title: '¡Voto guardado!',
+      text: `Tu voto "${votoSeleccionado}" se guardó exitosamente.`,
+    })
+  } catch (error) {
+    console.error('Error guardando voto:', error)
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Hubo un problema al guardar tu voto. Intenta de nuevo.',
+    })
+  }
+}
 
   return (
     <div className="container py-5">

@@ -41,7 +41,7 @@ function App() {
       const mocionId = mocionDoc.id
 
       // Crear VOTO con ID automático
-      const votoRef = await addDoc(collection(db, 'ASAMBLEAS', asambleaId, 'MOCIONES', mocionId, 'VOTOS'), {
+      const votoRef = await addDoc(collection(db, 'ASAMBLEAS', asambleaId, 'VOTOS_PARTICIPANTES'), {
         nombre
       })
 
@@ -59,6 +59,9 @@ function App() {
   return (
     <div className="container mt-5">
       <Asambleas votoDocPath={votoDocPath} nombreUsuario={mensaje.name} />
+      
+
+      
     </div>
   )
 }
