@@ -55,10 +55,10 @@ function Asambleas({ votoDocPath, nombreUsuario }) {
             className="btn btn-dark w-100 mt-3"
             onClick={handleClick}
           >
-            Ver detalles
+            Ver Mociones
           </button>
         </div>
-        <button className="btn btn-dark" onClick={() => setShowAdmin(true)}>VISTA ADMIN</button>
+        <button className="btn btn-outline-dark fw-semibold fst-italic" onClick={() => setShowAdmin(true)}>Ver resultados como administrador</button>
       </div>
     </div>
   )
