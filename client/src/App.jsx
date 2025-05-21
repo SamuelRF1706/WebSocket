@@ -5,7 +5,7 @@ import io from 'socket.io-client'
 import Swal from 'sweetalert2'
 
 import { getDocs, collection, addDoc } from 'firebase/firestore'
-import { db } from '../../server/commons/firebase'
+import { db } from './firebase.js'
 
 const socket = io('http://localhost:5000')
 

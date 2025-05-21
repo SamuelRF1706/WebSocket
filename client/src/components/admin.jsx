@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { collection, onSnapshot } from 'firebase/firestore'
-import { db } from '../../../server/commons/firebase.js'
+import { db } from './firebase.js'
 
 function AdminVotos({ asambleaId }) {
   const [mociones, setMociones] = useState([])

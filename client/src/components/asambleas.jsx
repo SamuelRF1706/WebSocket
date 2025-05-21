@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { collection, getDocs } from 'firebase/firestore'
-import { db } from '../../../server/commons/firebase.js'
+import { db } from './firebase.js'
 import Mociones from '../components/mociones.jsx'
 import AdminVotos from '../components/admin.jsx'  // Importa el componente admin que creamos antes
 
