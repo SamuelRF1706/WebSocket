@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore'
-import { db } from './firebase.js'
+import { db } from '../firebase.js'
 import { io } from 'socket.io-client'
 import Swal from 'sweetalert2'
 const socket = io('http://localhost:5000')
