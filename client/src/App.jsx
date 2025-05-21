@@ -11,7 +11,8 @@ const socket = io('http://localhost:5000')
 
 function App() {
   const [mensaje, setMensaje] = useState({ name: '', message: '' })
-  const [votoDocPath, setVotoDocPath] = useState(null) // Guardamos la ruta completa
+  const [votoDocPath, setVotoDocPath] = useState(null) // Ruta para actualizar voto
+  const [conteosEnVivo, setConteosEnVivo] = useState({}) // Conteos en tiempo real
 
   useEffect(() => {
     const identificarYGuardarUsuario = async () => {
@@ -45,7 +46,7 @@ function App() {
         nombre
       })
 
-      // Guardar la ruta para luego actualizar
+      // Guardar la ruta para luego actualizar el voto
       setVotoDocPath({
         asambleaId,
         mocionId,
@@ -56,12 +57,26 @@ function App() {
     identificarYGuardarUsuario()
   }, [])
 
+  // Escuchar conteos en tiempo real desde servidor via Socket.IO
+  useEffect(() => {
+    socket.on('conteo-actualizado', ({ asambleaId, conteo }) => {
+      console.log('Conteo recibido del servidor:', asambleaId, conteo)
+      setConteosEnVivo(conteo)
+    })
+
+    // Cleanup al desmontar el componente
+    return () => {
+      socket.off('conteo-actualizado')
+    }
+  }, [])
+
   return (
     <div className="container mt-5">
-      <Asambleas votoDocPath={votoDocPath} nombreUsuario={mensaje.name} />
-      
-
-      
+      <Asambleas 
+        votoDocPath={votoDocPath} 
+        nombreUsuario={mensaje.name} 
+        conteosEnVivo={conteosEnVivo} 
+      />
     </div>
   )
 }

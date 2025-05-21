@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore'
 import { db } from '../../../server/commons/firebase.js'
+import { io } from 'socket.io-client'
 import Swal from 'sweetalert2'
+const socket = io('http://localhost:5000')
+
 
 function Mociones({ votoId, mocionPath }) {
   const [mociones, setMociones] = useState([])
@@ -60,11 +63,15 @@ function Mociones({ votoId, mocionPath }) {
       [campoFecha]: new Date()
     })
 
+    // 🔁 Emitimos al servidor para que recalcule y envíe el nuevo conteo
+    socket.emit('nuevo-voto-guardado', { asambleaId: mocionPath.asambleaId })
+
     Swal.fire({
       icon: 'success',
       title: '¡Voto guardado!',
       text: `Tu voto "${votoSeleccionado}" se guardó exitosamente.`,
     })
+
   } catch (error) {
     console.error('Error guardando voto:', error)
     Swal.fire({

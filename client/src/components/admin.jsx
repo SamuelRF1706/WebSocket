@@ -1,44 +1,49 @@
 import { useEffect, useState } from 'react'
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, onSnapshot } from 'firebase/firestore'
 import { db } from '../../../server/commons/firebase.js'
 
 function AdminVotos({ asambleaId }) {
   const [mociones, setMociones] = useState([])
   const [conteos, setConteos] = useState({})
 
+  // Escuchar mociones en tiempo real
   useEffect(() => {
     if (!asambleaId) return
 
-    const fetchData = async () => {
-      try {
-        const mocionesSnap = await getDocs(collection(db, 'ASAMBLEAS', asambleaId, 'MOCIONES'))
-        const mocionesList = mocionesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-        setMociones(mocionesList)
+    const mocionesRef = collection(db, 'ASAMBLEAS', asambleaId, 'MOCIONES')
+    const unsubscribe = onSnapshot(mocionesRef, (snapshot) => {
+      const mocionesList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      setMociones(mocionesList)
+    })
 
-        const votosSnap = await getDocs(collection(db, 'ASAMBLEAS', asambleaId, 'VOTOS_PARTICIPANTES'))
-        const votosList = votosSnap.docs.map(doc => doc.data())
-
-        const conteoTemp = {}
-
-        mocionesList.forEach((mocion, idx) => {
-          const campo = `RM${idx + 1}`
-          conteoTemp[campo] = {}
-          votosList.forEach(votoDoc => {
-            const voto = votoDoc[campo]
-            if (voto) {
-              conteoTemp[campo][voto] = (conteoTemp[campo][voto] || 0) + 1
-            }
-          })
-        })
-
-        setConteos(conteoTemp)
-      } catch (error) {
-        console.error('Error cargando datos para administrador:', error)
-      }
-    }
-
-    fetchData()
+    return () => unsubscribe()
   }, [asambleaId])
+
+  // Escuchar votos en tiempo real y actualizar conteo
+  useEffect(() => {
+    if (!asambleaId || mociones.length === 0) return
+
+    const votosRef = collection(db, 'ASAMBLEAS', asambleaId, 'VOTOS_PARTICIPANTES')
+    const unsubscribe = onSnapshot(votosRef, (snapshot) => {
+      const votosList = snapshot.docs.map(doc => doc.data())
+      const conteoTemp = {}
+
+      mociones.forEach((mocion, idx) => {
+        const campo = `RM${idx + 1}`
+        conteoTemp[campo] = {}
+        votosList.forEach(votoDoc => {
+          const voto = votoDoc[campo]
+          if (voto) {
+            conteoTemp[campo][voto] = (conteoTemp[campo][voto] || 0) + 1
+          }
+        })
+      })
+
+      setConteos(conteoTemp)
+    })
+
+    return () => unsubscribe()
+  }, [asambleaId, mociones])
 
   return (
     <div className="container py-5">
