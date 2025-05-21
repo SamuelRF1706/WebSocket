@@ -40,37 +40,37 @@ function Mociones({ votoId, mocionPath }) {
 
   // Enviar voto para una mocion específica
   const handleSubmit = async (mocionId) => {
-  const votoSeleccionado = votos[mocionId]
-  if (!votoSeleccionado) {
-    Swal.fire({
-      icon: 'warning',
-      title: '¡Atención!',
-      text: 'Por favor, selecciona una opción antes de enviar.',
-    })
-    return
-  }
+    const votoSeleccionado = votos[mocionId]
+    if (!votoSeleccionado) {
+      Swal.fire({
+        icon: 'warning',
+        title: '¡Atención!',
+        text: 'Por favor, selecciona una opción antes de enviar.',
+      })
+      return
+    }
 
-  try {
-    // Determinar el índice de la moción en la lista para asignar RM1, RM2, RM3
-    const index = mociones.findIndex(mocion => mocion.id === mocionId)
-    const campoVoto = `RM${index + 1}`
-    const campoFecha = `fecha_RM${index + 1}`
+    try {
+      // Determinar el índice de la moción en la lista para asignar RM1, RM2, RM3
+      const index = mociones.findIndex(mocion => mocion.id === mocionId)
+      const campoVoto = `RM${index + 1}`
+      const campoFecha = `fecha_RM${index + 1}`
 
-    const votoRef = doc(db, 'ASAMBLEAS', mocionPath.asambleaId, 'VOTOS_PARTICIPANTES', votoId)
+      const votoRef = doc(db, 'ASAMBLEAS', mocionPath.asambleaId, 'VOTOS_PARTICIPANTES', votoId)
 
-    await updateDoc(votoRef, {
-      [campoVoto]: votoSeleccionado,
-      [campoFecha]: new Date()
-    })
+      await updateDoc(votoRef, {
+        [campoVoto]: votoSeleccionado,
+        [campoFecha]: new Date()
+      })
 
-    // 🔁 Emitimos al servidor para que recalcule y envíe el nuevo conteo
-    socket.emit('nuevo-voto-guardado', { asambleaId: mocionPath.asambleaId })
+      // 🔁 Emitimos al servidor para que recalcule y envíe el nuevo conteo
+      socket.emit('nuevo-voto-guardado', { asambleaId: mocionPath.asambleaId })
 
-    Swal.fire({
-      icon: 'success',
-      title: '¡Voto guardado!',
-      text: `Tu voto "${votoSeleccionado}" se guardó exitosamente.`,
-    })
+      Swal.fire({
+        icon: 'success',
+        title: '¡Voto guardado!',
+        text: `Tu voto "${votoSeleccionado}" se guardó exitosamente.`,
+      })
 
   } catch (error) {
     console.error('Error guardando voto:', error)
